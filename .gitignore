@@ -3,3 +3,5 @@
 ################################################################################
 
 /PubSubVismaConsole/ConsoleApp1/bin/Debug/net6.0
+/PubSubVismaConsole/ConsoleApp1/obj
+/PubSubVismaConsole/.vs/PubSubVismaConsole/v17
