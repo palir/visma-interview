@@ -2,11 +2,11 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/PubSubVismaConsole/ConsoleApp1/bin/Debug/net6.0
-/PubSubVismaConsole/ConsoleApp1/obj
-/PubSubVismaConsole/.vs/PubSubVismaConsole/v17
-/PubSubVismaConsole/.vs/ProjectEvaluation
-/PubSubVismaConsole/.vs/PubSubVismaConsole/DesignTimeBuild
-/PubSubVismaConsole/.vs/PubSubVismaConsole/FileContentIndex
-/PubSubVismaConsole/PubSubService/bin/Debug/net6.0
-/PubSubVismaConsole/PubSubService/obj
+/build/
+*.suo
+*.user
+bin/
+obj/
+Debug/
+Release/
+/PubSubVismaConsole/.vs
