@@ -41,11 +41,11 @@ namespace PubSubService.Services
                     throw new Exception($"Subscription: {subscription.Name} for subscriber: {subscription.SubscriberName} already exists!");
                 }
 
-                channelSubscriptions.Add(typeof(T), new List<Subscription>() { subscription });
+                channelSubscriptions[typeof(T)].Add(subscription);
             }
             else
             {
-                channelSubscriptions[typeof(T)].Add(subscription);
+                channelSubscriptions.Add(typeof(T), new List<Subscription>() { subscription });
             }
         }
 

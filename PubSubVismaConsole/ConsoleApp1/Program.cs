@@ -15,7 +15,6 @@ sub1.Subscribe<Weather>();
 ISubscriber sub2 = new Subscriber(nameof(sub2), broker, presenter);
 sub2.Subscribe<Weather>();
 sub2.Subscribe<CultureEvent>();
-sub2.Subscribe<CultureEvent>();
 
 Weather weather = new() { AirTemperature = 20, Description = "Cloudy" };
 Message<Weather> weatherMessage = new(weather);
@@ -25,3 +24,6 @@ Message<CultureEvent> cultEventMessage = new(cultEvent);
 
 publisher.Publish(weatherMessage);
 publisher.Publish(cultEventMessage);
+
+
+sub2.Subscribe<CultureEvent>(); //throws exception as the same subscription is already there
