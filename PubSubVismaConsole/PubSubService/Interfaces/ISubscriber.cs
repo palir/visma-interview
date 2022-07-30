@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PubSubService.DataClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace PubSubService.Interfaces
 {
     public interface ISubscriber
     {
-        void Subscribe<T>() where T : class;
+        void Subscribe<T>() where T : MessageData;
     }
 }

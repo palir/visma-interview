@@ -9,6 +9,6 @@ namespace PubSubService.Interfaces
 {
     public interface IMessagePresenter
     {
-        public void PresentData<T>(string subscriberName, T messageData) where T: class;
+        public void PresentData<T>(string subscriberName, T messageData) where T : MessageData;
     }
 }

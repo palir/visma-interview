@@ -1,53 +1,58 @@
-﻿using PubSubService.DataClasses;
+﻿using Ardalis.GuardClauses;
+using PubSubService.DataClasses;
 using PubSubService.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PubSubService.Services
 {
     public class MessageBroker : IMessageBroker
     {
-        public delegate void PostDataDelegate<T>(T item);
+        Dictionary<Type, List<Subscription>> channelSubscriptions = new Dictionary<Type, List<Subscription>>();
+        Dictionary<Type, IDataProcessor> processors = new Dictionary<Type, IDataProcessor>();
 
-        Dictionary<Type, List<Delegate>> channelSubscribers = new Dictionary<Type, List<Delegate>>();
-        Dictionary<Type, IDataProcessor> processors = new Dictionary<Type, IDataProcessor>();    
-
-        public void QueueMessage<T>(Message<T> message) where T : class
+        public void SendMessage<T>(Message<T> message) where T : MessageData
         {
-            foreach(var subscriber in channelSubscribers[typeof(T)])
+            Guard.Against.Null(message, nameof(message));
+
+            foreach (ISubscription subscription in channelSubscriptions[typeof(T)])
             {
-                PostDataDelegate<T> m1 = (PostDataDelegate<T>)subscriber;
+                //TODO: in real world scenario there should be a queue here, that would hold messages
+                // as not all subscribers might consume them immediately
+                
+                T dataToSend = message.Data;
 
                 if (processors.TryGetValue(typeof(T), out IDataProcessor? processor))
                 {
-                    m1(((IDataProcessor<T>)processor).ProcessData(message.Data));
+                    dataToSend = ((IDataProcessor<T>)processor).ProcessData(message.Data);
                 }
-                else
-                {
-                    m1(message.Data);
-                }
+
+                ((ISubscription<T>)subscription).ConsumeData(dataToSend);
             }
         }
 
-        public void Subscribe<T>(PostDataDelegate<T> subscriber)
+        public void Subscribe<T>(Subscription<T> subscription) where T : MessageData
         {
-            PostDataDelegate<T> m1 = subscriber;
+            Guard.Against.Null(subscription, nameof(subscription));
 
-            if (!channelSubscribers.ContainsKey(typeof(T)))
+            if (channelSubscriptions.ContainsKey(typeof(T)))
             {
-                channelSubscribers.Add(typeof(T), new List<Delegate>() { subscriber });
+                if (channelSubscriptions[typeof(T)].ToList()
+                    .Any(existSubscr => existSubscr.Name == subscription.Name && existSubscr.SubscriberName == subscription.SubscriberName))
+                {
+                    throw new Exception($"Subscription: {subscription.Name} for subscriber: {subscription.SubscriberName} already exists!");
+                }
+
+                channelSubscriptions.Add(typeof(T), new List<Subscription>() { subscription });
             }
             else
             {
-                channelSubscribers[typeof(T)].Add(subscriber);
+                channelSubscriptions[typeof(T)].Add(subscription);
             }
         }
 
-        public void AddDataProcessor<T>(IDataProcessor<T> processor) where T : class
+        public void AddDataProcessor<T>(IDataProcessor<T> processor) where T : MessageData
         {
+            Guard.Against.Null(processor, nameof(processor));
+
             processors.Add(typeof(T), processor);
         }
     }

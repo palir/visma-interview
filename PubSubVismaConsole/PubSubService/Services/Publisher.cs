@@ -1,10 +1,6 @@
-﻿using PubSubService.DataClasses;
+﻿using Ardalis.GuardClauses;
+using PubSubService.DataClasses;
 using PubSubService.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PubSubService.Services
 {
@@ -13,12 +9,16 @@ namespace PubSubService.Services
         private readonly IMessageBroker messageBroker;
         public Publisher(IMessageBroker messageBroker)
         {
+            Guard.Against.Null(messageBroker, nameof(messageBroker));
+
             this.messageBroker = messageBroker;
         }
 
-        public void Publish<T>(Message<T> message) where T : class
+        public void Publish<T>(Message<T> message) where T : MessageData
         {
-            messageBroker.QueueMessage(message);
+            Guard.Against.Null(message, nameof(message));
+
+            messageBroker.SendMessage(message);
         }
     }
 }

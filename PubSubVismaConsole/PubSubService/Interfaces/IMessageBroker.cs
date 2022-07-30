@@ -10,8 +10,8 @@ namespace PubSubService.Interfaces
 {
     public interface IMessageBroker
     {
-        void AddDataProcessor<T>(IDataProcessor<T> processor) where T : class;
-        void QueueMessage<T>(Message<T> message) where T : class;
-        void Subscribe<T>(MessageBroker.PostDataDelegate<T> subscriber);
+        void AddDataProcessor<T>(IDataProcessor<T> processor) where T : MessageData;
+        void SendMessage<T>(Message<T> message) where T : MessageData;
+        void Subscribe<T>(Subscription<T> subscriber) where T : MessageData;
     }
 }

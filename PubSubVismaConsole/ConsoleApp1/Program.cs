@@ -1,10 +1,6 @@
-﻿using HtmlAgilityPack;
-using PubSubService.DataClasses;
+﻿using PubSubService.DataClasses;
 using PubSubService.Interfaces;
 using PubSubService.Services;
-using System;
-using System.Net;
-using System.Text;
 
 IDataProcessor<Weather> upperCaseProcessor = new UpperCaseDataProcessor<Weather>();
 IMessageBroker broker = new MessageBroker();
@@ -13,12 +9,12 @@ broker.AddDataProcessor(upperCaseProcessor);
 IPublisher publisher = new Publisher(broker);
 IMessagePresenter presenter = new ConsoleMessagePresenter();
 
-
 ISubscriber sub1 = new Subscriber(nameof(sub1), broker, presenter);
 sub1.Subscribe<Weather>();
 
 ISubscriber sub2 = new Subscriber(nameof(sub2), broker, presenter);
 sub2.Subscribe<Weather>();
+sub2.Subscribe<CultureEvent>();
 sub2.Subscribe<CultureEvent>();
 
 Weather weather = new() { AirTemperature = 20, Description = "Cloudy" };

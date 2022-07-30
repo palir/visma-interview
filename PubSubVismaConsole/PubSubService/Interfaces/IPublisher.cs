@@ -9,6 +9,6 @@ namespace PubSubService.Interfaces
 {
     public interface IPublisher
     {
-        void Publish<T>(Message<T> message) where T : class;
+        void Publish<T>(Message<T> message) where T : MessageData;
     }
 }

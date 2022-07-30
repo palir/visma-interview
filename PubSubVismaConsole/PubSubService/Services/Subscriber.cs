@@ -1,10 +1,6 @@
-﻿using PubSubService.DataClasses;
+﻿using Ardalis.GuardClauses;
+using PubSubService.DataClasses;
 using PubSubService.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PubSubService.Services
 {
@@ -14,19 +10,27 @@ namespace PubSubService.Services
         private readonly IMessageBroker broker;
         private readonly IMessagePresenter presenter;
 
-        public Subscriber(string name, IMessageBroker broker, IMessagePresenter presenter)
+        public Subscriber(string name, IMessageBroker messageBroker, IMessagePresenter presenter)
         {
+            Guard.Against.NullOrWhiteSpace(name, nameof(name));
+            Guard.Against.Null(messageBroker, nameof(messageBroker));
+            Guard.Against.Null(presenter, nameof(presenter));
+
             this.name = name;
-            this.broker = broker;
+            this.broker = messageBroker;
             this.presenter = presenter;
         }
-        public void Subscribe<T>() where T : class
+        public void Subscribe<T>() where T : MessageData
         {
-            broker.Subscribe<T>(OnGetMessage);
+            DelegateBasedSubsription<T> subscr = new DelegateBasedSubsription<T>($"{typeof(T).Name}", name, OnGetMessage<T>);
+            
+            broker.Subscribe<T>(subscr);
         }
 
-        void OnGetMessage<T>(T message) where T : class
+        void OnGetMessage<T>(T message) where T : MessageData
         {
+            Guard.Against.Null(message, nameof(message));
+
             presenter.PresentData(name, message);
         }
     }
