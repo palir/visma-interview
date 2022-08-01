@@ -1,11 +1,11 @@
-using NSubstitute;
+﻿using NSubstitute;
 using PubSubService.DataClasses;
 using PubSubService.Interfaces;
 using PubSubService.Services;
 
 namespace PubSubServiceTests
 {
-    public class Tests
+    public class PublisherTests
     {
         private Publisher target;
         IMessageBroker messagebroker;
@@ -24,6 +24,7 @@ namespace PubSubServiceTests
 
             // Act
             var ex = Assert.Throws<ArgumentNullException>(delegate { this.target.Publish<Weather>((Message<Weather>)null); });
+
 
             // Assert
             Assert.That(ex, Is.Not.Null, "Exception was null");

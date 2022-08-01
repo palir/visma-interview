@@ -1,16 +1,27 @@
 ﻿using Ardalis.GuardClauses;
+using Microsoft.Extensions.Logging;
 using PubSubService.DataClasses;
+using PubSubService.Exceptions;
 using PubSubService.Interfaces;
 
 namespace PubSubService.Services
 {
     public class MessageBroker : IMessageBroker
     {
-        Dictionary<Type, List<Subscription>> channelSubscriptions = new Dictionary<Type, List<Subscription>>();
-        Dictionary<Type, IDataProcessor> processors = new Dictionary<Type, IDataProcessor>();
+        ILogger logger;
+
+        private readonly Dictionary<Type, List<ISubscription>> channelSubscriptions = new Dictionary<Type, List<ISubscription>>();
+        private readonly Dictionary<Type, IDataProcessor> processors = new Dictionary<Type, IDataProcessor>();
+
+        public MessageBroker(ILogger logger)
+        {
+            this.logger = logger;
+        }
 
         public void SendMessage<T>(Message<T> message) where T : MessageData
         {
+            logger.LogInformation($"Sending {typeof(T).Name} message");
+
             Guard.Against.Null(message, nameof(message));
 
             foreach (ISubscription subscription in channelSubscriptions[typeof(T)])
@@ -22,38 +33,88 @@ namespace PubSubService.Services
 
                 if (processors.TryGetValue(typeof(T), out IDataProcessor? processor))
                 {
-                    dataToSend = ((IDataProcessor<T>)processor).ProcessData(message.Data);
+                    try
+                    {
+                        dataToSend = ((IDataProcessor<T>)processor).ProcessData(message.Data);
+
+                    }catch(Exception ex)
+                    {
+                        logger.LogError("Error during data processing");
+                        throw new DataProcessingException(ex); 
+                    }
                 }
 
-                ((ISubscription<T>)subscription).ConsumeData(dataToSend);
+                try
+                {
+                    ((ISubscription<T>)subscription).ConsumeData(dataToSend);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Error during data transport");
+                    throw new DataTransportException(ex);
+                }
+
+                logger.LogInformation($"Message {typeof(T).Name} sucessfuly sent");
             }
         }
 
-        public void Subscribe<T>(Subscription<T> subscription) where T : MessageData
+        public void Subscribe<T>(ISubscription<T> subscription) where T : MessageData
         {
             Guard.Against.Null(subscription, nameof(subscription));
+
+            logger.LogInformation($"Registering subscription {subscription.Name} from subscriber: {subscription.SubscriberName} ");
 
             if (channelSubscriptions.ContainsKey(typeof(T)))
             {
                 if (channelSubscriptions[typeof(T)].ToList()
                     .Any(existSubscr => existSubscr.Name == subscription.Name && existSubscr.SubscriberName == subscription.SubscriberName))
                 {
-                    throw new Exception($"Subscription: {subscription.Name} for subscriber: {subscription.SubscriberName} already exists!");
+                    throw new SubscriptionException($"Subscription: {subscription.Name} for subscriber: {subscription.SubscriberName} already exists!");
                 }
 
-                channelSubscriptions[typeof(T)].Add(subscription);
+                try
+                {
+                    channelSubscriptions[typeof(T)].Add(subscription);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Registering a subscription failed");
+                    throw new SubscriptionException(ex);
+                }
             }
             else
             {
-                channelSubscriptions.Add(typeof(T), new List<Subscription>() { subscription });
+                try
+                {
+                    channelSubscriptions.Add(typeof(T), new List<ISubscription>() { subscription });
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Registering a subscription failed");
+                    throw new SubscriptionException(ex);
+                }
             }
+
+            logger.LogInformation($"Subscription {subscription.Name} from subscriber: {subscription.SubscriberName} sucessfuly registered");
         }
 
         public void AddDataProcessor<T>(IDataProcessor<T> processor) where T : MessageData
         {
             Guard.Against.Null(processor, nameof(processor));
 
-            processors.Add(typeof(T), processor);
+            logger.LogInformation($"Adding data processor for channel {typeof(T).Name}");
+
+            try
+            {
+                processors.Add(typeof(T), processor);
+
+            }catch(Exception ex)
+            {
+                logger.LogError("Adding a processor failed");
+                throw new DataProcessingException(ex);
+            }
+
+            logger.LogInformation($"Data processor for channel {typeof(T).Name} sucessfuly added");
         }
     }
 }

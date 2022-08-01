@@ -1,17 +1,31 @@
 ﻿using PubSubService.DataClasses;
-using PubSubService.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PubSubService.Interfaces
 {
+    /// <summary>
+    /// A messsage broker interface
+    /// </summary>
     public interface IMessageBroker
     {
+        /// <summary>
+        /// Add data processor
+        /// </summary>
+        /// <typeparam name="T">The channel type</typeparam>
+        /// <param name="processor">The processor implementation</param>
         void AddDataProcessor<T>(IDataProcessor<T> processor) where T : MessageData;
+
+        /// <summary>
+        /// Sends the message to all registered subscribers in the channel
+        /// </summary>
+        /// <typeparam name="T">The channel type</typeparam>
+        /// <param name="message"></param>
         void SendMessage<T>(Message<T> message) where T : MessageData;
-        void Subscribe<T>(Subscription<T> subscriber) where T : MessageData;
+
+        /// <summary>
+        /// Registers the subscription
+        /// </summary>
+        /// <typeparam name="T">The channel type</typeparam>
+        /// <param name="subscription">The subscription definition.</param>
+        void Subscribe<T>(ISubscription<T> subscription) where T : MessageData;
     }
 }

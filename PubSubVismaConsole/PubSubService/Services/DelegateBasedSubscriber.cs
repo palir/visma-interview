@@ -4,13 +4,13 @@ using PubSubService.Interfaces;
 
 namespace PubSubService.Services
 {
-    public class Subscriber : ISubscriber 
+    public class DelegateBasedSubscriber : ISubscriber 
     {
         private readonly string name;
         private readonly IMessageBroker broker;
         private readonly IMessagePresenter presenter;
 
-        public Subscriber(string name, IMessageBroker messageBroker, IMessagePresenter presenter)
+        public DelegateBasedSubscriber(string name, IMessageBroker messageBroker, IMessagePresenter presenter)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.Null(messageBroker, nameof(messageBroker));
@@ -20,11 +20,13 @@ namespace PubSubService.Services
             this.broker = messageBroker;
             this.presenter = presenter;
         }
-        public void Subscribe<T>() where T : MessageData
+        public ISubscription<T> Subscribe<T>() where T : MessageData
         {
             DelegateBasedSubsription<T> subscr = new DelegateBasedSubsription<T>($"{typeof(T).Name}", name, OnGetMessage<T>);
             
             broker.Subscribe<T>(subscr);
+
+            return subscr;
         }
 
         void OnGetMessage<T>(T message) where T : MessageData

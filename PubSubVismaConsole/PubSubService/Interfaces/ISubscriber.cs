@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace PubSubService.Interfaces
 {
+    /// <summary>
+    /// The subscriber interface
+    /// </summary>
     public interface ISubscriber
     {
-        void Subscribe<T>() where T : MessageData;
+        /// <summary>
+        /// Registers the subscription
+        /// </summary>
+        /// <typeparam name="T">The channel type.</typeparam>
+        /// <returns>The created subscription.</returns>
+        ISubscription<T> Subscribe<T>() where T : MessageData;
     }
 }
