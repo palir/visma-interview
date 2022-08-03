@@ -1,11 +1,12 @@
-﻿using Ardalis.GuardClauses;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: UpperCaseDataProcessor.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using Ardalis.GuardClauses;
 using PubSubService.DataClasses;
 using PubSubService.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PubSubService.Services
 {

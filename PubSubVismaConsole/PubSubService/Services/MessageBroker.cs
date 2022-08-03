@@ -1,4 +1,10 @@
-﻿using Ardalis.GuardClauses;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: MessageBroker.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using Ardalis.GuardClauses;
 using Microsoft.Extensions.Logging;
 using PubSubService.DataClasses;
 using PubSubService.Exceptions;

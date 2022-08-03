@@ -1,4 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: MessageBrokerTests.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using PubSubService.DataClasses;
 using PubSubService.Exceptions;
@@ -45,7 +51,7 @@ namespace PubSubServiceTests
         }
 
         [Test]
-        public void Subscribe_DataProcessorExists_CallsProcessData()
+        public void SendMessage_DataProcessorExists_CallsProcessData()
         {
             // Arrange
             Message<Weather> weatherMessage = new Message<Weather>(FakeData.Weather);
@@ -63,6 +69,47 @@ namespace PubSubServiceTests
 
             // Assert
             dataProcessor.Received(1).ProcessData(weatherMessage.Data);
+        }
+
+        [Test]
+        public void SendMessage_DataProcessorExists_CallsConsumeDataWithModifiedData()
+        {
+            // Arrange
+            Message<Weather> weatherMessage = new Message<Weather>(FakeData.Weather);
+            Weather modifiedData = new Weather() { AirTemperature = 18, Description = weatherMessage.Data.Description.ToUpper() };
+
+            IDataProcessor<Weather> dataProcessor = Substitute.For<IDataProcessor<Weather>>();
+            dataProcessor.ProcessData(weatherMessage.Data).Returns(modifiedData);
+
+            Subscription<Weather> subscr1 = Substitute.For<Subscription<Weather>>(typeof(Weather).Name, subscriberName);
+
+            this.target.Subscribe(subscr1);
+
+            this.target.AddDataProcessor<Weather>(dataProcessor);
+
+            // Act
+            this.target.SendMessage<Weather>(weatherMessage);
+
+            // Assert
+            subscr1.Received(1).ConsumeData(Arg.Is<Weather>(weather => weather.AirTemperature == modifiedData.AirTemperature &&
+                                                                       weather.Description == modifiedData.Description));
+        }
+
+        [Test]
+        public void Subscribe_AlreadyExistsSubscription_ThrowsSubscriptionException()
+        {
+            // Arrange
+            Message<Weather> weatherMessage = new Message<Weather>(FakeData.Weather);
+
+            Subscription<Weather> subscr1 = Substitute.For<Subscription<Weather>>(typeof(Weather).Name, subscriberName);
+
+            this.target.Subscribe(subscr1);
+
+            // Act
+            var ex = Assert.Throws<SubscriptionException>(delegate { this.target.Subscribe(subscr1); });
+
+            // Assert
+            Assert.That(ex, Is.Not.Null, "Exception was null");
         }
     }
 }

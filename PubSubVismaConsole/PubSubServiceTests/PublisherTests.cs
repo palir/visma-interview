@@ -1,4 +1,10 @@
-﻿using NSubstitute;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: PublisherTests.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using NSubstitute;
 using PubSubService.DataClasses;
 using PubSubService.Interfaces;
 using PubSubService.Services;

@@ -1,6 +1,11 @@
-﻿using NSubstitute;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: SubscriberTests.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using NSubstitute;
 using PubSubService.DataClasses;
-using PubSubService.Exceptions;
 using PubSubService.Interfaces;
 using PubSubService.Services;
 
@@ -35,19 +40,6 @@ namespace PubSubServiceTests
             this.messageBroker.Received(1).Subscribe<Weather>(Arg.Is<Subscription<Weather>>(
                 sub => sub.SubscriberName == subscriberName &&
                        sub.Name == typeof(Weather).Name));
-        }
-
-        [Test]
-        public void Subscribe_AlreadyExistsSubscription_ThrowsSubscriptionException()
-        {
-            // Arrange
-            target.Subscribe<Weather>();
-
-            // Act
-            var ex = Assert.Throws<SubscriptionException>(delegate { this.target.Subscribe<Weather>(); });
-
-            // Assert
-            Assert.That(ex, Is.Not.Null, "Exception was null");
         }
     }
 }

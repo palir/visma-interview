@@ -1,9 +1,10 @@
-﻿using PubSubService.DataClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: IPublisher.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using PubSubService.DataClasses;
 
 namespace PubSubService.Interfaces
 {

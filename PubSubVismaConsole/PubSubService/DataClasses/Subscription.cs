@@ -1,4 +1,10 @@
-﻿using PubSubService.Interfaces;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: Subscription.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using PubSubService.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,10 @@
-﻿using PubSubService.DataClasses;
+﻿// --------------------------------------------------------------------------------------------------------------------
+//  file: FakeData.cs
+//  description: Created for the purpose of an job apply interview  8/2022
+//  author: Pavol Raska 
+//  --------------------------------------------------------------------------------------------------------------------
+
+using PubSubService.DataClasses;
 
 namespace PubSubServiceTests
 {
