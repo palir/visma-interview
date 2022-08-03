@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/build/
+*.suo
+*.user
+bin/
+obj/
+Debug/
+Release/
+/PubSubVismaConsole/.vs
+/PubSubVismaConsole/.editorconfig
