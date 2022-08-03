@@ -7,7 +7,7 @@ The most important limitations:
 
 1. Missing dependency injection
 2. Only demonstrative unit tests coverage
-3. No network communication - only delegate used to demonstrate message sending
+3. No network communication - only delegate used to demonstrate message transport
 4. Missing message queue and message delivery confirmation
 5. Just very basic exception handling
 
