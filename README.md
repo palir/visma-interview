@@ -10,7 +10,8 @@ The most important limitations:
 2. Only demonstrative unit tests coverage
 3. No network communication - only delegate used to demonstrate message transport
 4. Missing message queue and message delivery confirmation
-5. Just very basic level of exception handling and logging
+5. Just very basic level of exception handling and logging/auditing
+6. Sync execution only
 
 Created using VS2022/NET.6
 
